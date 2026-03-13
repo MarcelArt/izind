@@ -7,11 +7,13 @@ import { useMutation } from '@tanstack/react-query';
 import { loginMutation } from '@/queries/auth.query';
 import { useForm } from '@tanstack/react-form-start';
 import { LoginInputSchema } from '@/@types/user.d';
+import { useNavigate } from '@tanstack/react-router';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate();
   const { mutate, isPending } = useMutation(
     loginMutation({
-      onSuccess: (data) => console.log('data :>> ', data),
+      onSuccess: () => navigate({ to: '/' }),
       onError: (e) => console.log('e :>> ', e),
     })
   );

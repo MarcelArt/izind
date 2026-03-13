@@ -1,4 +1,10 @@
+import type { RecordId } from 'surrealdb';
 import z from 'zod';
+
+export interface User {
+  id: RecordId<'users', string>;
+  nik: string;
+}
 
 export const RegisterInputSchema = z
   .object({

@@ -1,24 +1,46 @@
 import { Surreal } from 'surrealdb';
 
-const db = new Surreal();
-let isConnected = false;
-
-async function connect() {
-    try {
-        await db.connect(process.env.SURREAL_HOST, {
-            namespace: process.env.SURREAL_NS,
-            database: process.env.SURREAL_DB,
-        });
-        isConnected = true;
-        console.log('Connected to SurrealDB');
-    }
-    catch(e) {
-        console.error('Error connecting to SurrealDB:', e)
-    }
+type SuccessSession = {
+    db: Surreal,
+    isSuccess: true,
+    error?: Error,
 }
 
-export async function getDb(): Promise<Surreal> {
-    if (!isConnected) await connect();
+type ErrorSession = {
+    db?: Surreal,
+    isSuccess: false,
+    error: Error,
+}
 
-    return db;
+export async function connect(token?: string): Promise<SuccessSession | ErrorSession> {
+  try {
+    const db = new Surreal();
+    await db.connect(process.env.SURREAL_HOST, {
+      namespace: process.env.SURREAL_NS,
+      database: process.env.SURREAL_DB,
+    });
+
+    if (token) db.authenticate(token);
+
+    return { isSuccess: true, db };
+  } catch (e) {
+    console.error('Error connecting to SurrealDB:', e);
+    return { isSuccess: false, error: e as Error };
+  }
+}
+
+export async function execute<T>(cb: (db: Surreal) => Promise<T>, token?: string): Promise<T> {
+    const db = new Surreal();
+    await db.connect(process.env.SURREAL_HOST, {
+      namespace: process.env.SURREAL_NS,
+      database: process.env.SURREAL_DB,
+    });
+
+    if (token) db.authenticate(token);
+
+    const res = await cb(db);
+
+    db.close();
+
+    return res;
 }

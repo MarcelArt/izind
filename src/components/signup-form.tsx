@@ -7,10 +7,13 @@ import { useForm } from '@tanstack/react-form-start';
 import { RegisterInputSchema } from '@/@types/user.d';
 import { useMutation } from '@tanstack/react-query';
 import { registerMutation } from '@/queries/auth.query';
+import { useNavigate } from '@tanstack/react-router';
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate();
+
   const { mutate } = useMutation(registerMutation({
-    onSuccess: (data) => console.log('data :>> ', data),
+    onSuccess: () => navigate({ to: '/login' }),
     onError: (e) => console.log('e :>> ', e),
   }));
 
@@ -118,7 +121,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               <Field>
                 <Button type="submit">Create Account</Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <a href="#">Sign in</a>
+                  Already have an account? <a href="/login">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

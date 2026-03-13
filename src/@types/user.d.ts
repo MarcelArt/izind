@@ -21,3 +21,9 @@ export const RegisterInputSchema = z
     }
   });
 export type RegisterInput = z.infer<typeof RegisterInputSchema>;
+
+export const LoginInputSchema = z.object({
+  nik: z.string().min(16, 'NIK must be at least 16 characters long'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+});
+export type LoginInput = z.infer<typeof LoginInputSchema>;

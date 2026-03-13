@@ -16,6 +16,7 @@ declare global {
       readonly SURREAL_HOST: string;
       readonly SURREAL_NS: string;
       readonly SURREAL_DB: string;
+      readonly SESSION_SECRET: string;
       readonly NODE_ENV: 'development' | 'production' | 'test';
     }
   }

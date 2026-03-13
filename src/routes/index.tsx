@@ -1,26 +1,20 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
-import { getCurrentUser } from "@/functions/auth.func"
+import { redirectToLogin } from "@/lib/auth";
+import { useMutation } from "@tanstack/react-query";
+import { logoutMutation } from "@/queries/auth.query";
 
 export const Route = createFileRoute("/")({ 
   component: App,
-  beforeLoad: async ({ location }) => {
-    const user = await getCurrentUser();
-
-    if (!user) {
-      throw redirect({
-        to: '/login',
-        search: { redirect: location.href },
-      })
-    }
-
-    return { user };
-  }
+  beforeLoad: redirectToLogin,
 })
 
 function App() {
   const { user } = Route.useRouteContext();
-  console.log('user :>> ', user);
+  const navigate = Route.useNavigate();
+  const { mutate } = useMutation(logoutMutation({
+    onSuccess: () => navigate({ to: '/login' }),
+  }));
 
   return (
     <div className="flex min-h-svh p-6">
@@ -29,7 +23,7 @@ function App() {
           <h1 className="font-medium">Welcome {user.nik} - {user.id}</h1>
           <p>You may now add components and start building.</p>
           <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Logout</Button>
+          <Button onClick={() => mutate()} className="mt-2">Logout</Button>
         </div>
       </div>
     </div>

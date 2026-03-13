@@ -23,6 +23,12 @@ export const loginUser = createServerFn({ method: 'POST' })
     return token;
   });
 
+export const logoutUser = createServerFn({ method: 'POST' })
+  .handler(async () => {
+    const session = await useAppSession();
+    await session.clear();
+  })
+
 export const getCurrentUser = createServerFn({ method: 'GET' })
   .handler(async () => {
     try {

@@ -1,3 +1,4 @@
+import type { RecordId } from "surrealdb";
 import z from "zod";
 
 type Gender = 'L' | 'P';
@@ -9,7 +10,7 @@ export interface Profile {
     nik: string;
     name: string;
     place_of_birth: string;
-    date_of_birth?: string;
+    date_of_birth?: Date;
     gender?: Gender;
     address: string;
     rt: string;
@@ -21,7 +22,8 @@ export interface Profile {
     marital_status: string;
     job: string;
     nationality: string;
-    blood_type: BloodType;
+    blood_type?: BloodType;
+    user_id: RecordId<'users', string>,
 }
 
 export const ProfileInputSchema = z.object({
@@ -29,7 +31,7 @@ export const ProfileInputSchema = z.object({
     name: z.string(),
     place_of_birth: z.string(),
     date_of_birth: z.string(),
-    gender: z.string(),
+    gender: z.enum(['L', 'P']),
     address: z.string(),
     rt: z.string(),
     rw: z.string(),
@@ -40,6 +42,6 @@ export const ProfileInputSchema = z.object({
     marital_status: z.string(),
     job: z.string(),
     nationality: z.string(),
-    blood_type: z.string(),
+    blood_type: z.enum(['A', 'B', 'AB', 'O']),
 });
 export type ProfileInput = z.infer<typeof ProfileInputSchema>;

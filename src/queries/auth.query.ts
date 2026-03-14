@@ -1,5 +1,5 @@
 import type { LoginInput, RegisterInput } from '@/@types/user';
-import type { MutationCallbacks } from '@/functions';
+import type { MutationCallbacks } from '@/queries';
 import { loginUser, logoutUser, registerUser } from '@/functions/auth.func';
 import { mutationOptions } from '@tanstack/react-query';
 import type { Tokens } from 'surrealdb';

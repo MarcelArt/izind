@@ -6,7 +6,12 @@ import { profiles } from "@/@types";
 
 async function update(id: string, input: ProfileInput, token: string) {
     return await execute(async db => {
-        return await db.update(recordIdFromString(id)).content(input);
+        console.log('input :>> ', input);
+        return await db.update(recordIdFromString(id)).merge({
+            ...input,
+            name: input.name,
+            date_of_birth: new Date(input.date_of_birth),
+        });
     }, token);
 }
 

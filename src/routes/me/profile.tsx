@@ -4,10 +4,10 @@ import { useForm } from '@tanstack/react-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldContent, FieldLabel, FieldError } from '@/components/ui/field';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { getProfileByUserIdOption } from '@/queries/profile.query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { getProfileByUserIdOption, updateProfileOption } from '@/queries/profile.query';
 import { requireAuth } from '@/lib/auth';
-import { ProfileInputSchema } from '@/@types/profile.d';
+import { ProfileInputSchema, type BloodType, type Gender } from '@/@types/profile.d';
 
 export const Route = createFileRoute('/me/profile')({
   component: RouteComponent,
@@ -16,16 +16,24 @@ export const Route = createFileRoute('/me/profile')({
 
 function RouteComponent() {
   const { user } = Route.useLoaderData();
+
   const { data } = useSuspenseQuery(getProfileByUserIdOption(user.id));
+
+  console.log('data :>> ', data);
+
+  const { mutate } = useMutation(updateProfileOption({
+    onSuccess: () => console.log('success'),
+    onError: (e) => console.log('error', e),
+  }));
 
   const form = useForm({
     defaultValues: {
       nik: data.nik,
       name: data.name,
       place_of_birth: data.place_of_birth,
-      date_of_birth: data.date_of_birth,
-      gender: data.gender?.toString() ?? '',
-      blood_type: data.blood_type?.toString() ?? '',
+      date_of_birth: data.date_of_birth ?? '',
+      gender: data.gender ?? 'L',
+      blood_type: data.blood_type ?? 'O',
       address: data.address,
       rt: data.rt,
       rw: data.rw,
@@ -39,7 +47,14 @@ function RouteComponent() {
     },
     validators: {
       onSubmit: ProfileInputSchema,
-    }
+    },
+    onSubmit: ({ value }) => mutate({ 
+      id: String(data.id), 
+      input: {
+        ...value,
+        date_of_birth: value.date_of_birth,
+      } 
+    }),
   });
 
   return (
@@ -47,7 +62,9 @@ function RouteComponent() {
       <h1 className="mb-8 text-2xl font-semibold">My Profile</h1>
       <form
         onSubmit={(e) => {
+          console.log('clicked');
           e.preventDefault();
+          form.handleSubmit();
         }}
         className="space-y-6"
       >
@@ -99,7 +116,7 @@ function RouteComponent() {
               <Field>
                 <FieldLabel htmlFor={field.name}>Date of Birth</FieldLabel>
                 <FieldContent>
-                  <Input id={field.name} name={field.name} type="date" value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} />
+                  <Input id={field.name} name={field.name} type="date" value={field.state.value.toString()} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} />
                 </FieldContent>
                 <FieldError errors={field.state.meta.errors} />
               </Field>
@@ -117,7 +134,7 @@ function RouteComponent() {
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) => field.handleChange(e.target.value as Gender)}
                     className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Select gender</option>
@@ -141,7 +158,7 @@ function RouteComponent() {
                     name={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) => field.handleChange(e.target.value as BloodType)}
                     className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Select blood type</option>

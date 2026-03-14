@@ -13,7 +13,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const navigate = useNavigate();
   const { mutate, isPending } = useMutation(
     loginMutation({
-      onSuccess: () => navigate({ to: '/' }),
+      onSuccess: () => navigate({ to: '/me/profile' }),
       onError: (e) => console.log('e :>> ', e),
     })
   );

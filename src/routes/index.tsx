@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
-import { redirectToLogin } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { useMutation } from "@tanstack/react-query";
 import { logoutMutation } from "@/queries/auth.query";
 
 export const Route = createFileRoute("/")({ 
   component: App,
-  beforeLoad: redirectToLogin,
+  beforeLoad: requireAuth,
 })
 
 function App() {

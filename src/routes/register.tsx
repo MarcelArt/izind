@@ -1,11 +1,11 @@
 import { SignupForm } from '@/components/signup-form';
-import { redirectToIndex } from '@/lib/auth';
+import { authenticated } from '@/lib/auth';
 import { createFileRoute } from '@tanstack/react-router';
 import { GalleryVerticalEnd } from 'lucide-react';
 
 export const Route = createFileRoute('/register')({
   component: RouteComponent,
-  beforeLoad: redirectToIndex,
+  beforeLoad: authenticated,
 });
 
 function RouteComponent() {

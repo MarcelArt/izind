@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/functions/auth.func';
 import { type ParsedLocation, redirect } from '@tanstack/react-router';
 
-export const redirectToLogin = async ({ location }: { location: ParsedLocation<{}> }) => {
+export const requireAuth = async ({ location }: { location: ParsedLocation<{}> }) => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -14,12 +14,12 @@ export const redirectToLogin = async ({ location }: { location: ParsedLocation<{
   return { user };
 };
 
-export const redirectToIndex = async ({ location }: { location: ParsedLocation<{}> }) => {
+export const authenticated = async ({ location }: { location: ParsedLocation<{}> }) => {
   const user = await getCurrentUser();
 
   if (user) {
     throw redirect({
-      to: '/',
+      to: '/me/profile',
       search: { redirect: location.href },
     });
   }

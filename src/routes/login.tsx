@@ -1,10 +1,10 @@
 import { LoginForm } from '@/components/login-form';
-import { redirectToIndex } from '@/lib/auth';
+import { authenticated } from '@/lib/auth';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
-  beforeLoad: redirectToIndex,
+  beforeLoad: authenticated,
 });
 
 function RouteComponent() {
